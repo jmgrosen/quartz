@@ -55,6 +55,9 @@ export interface Translation {
     tableOfContents: {
       title: string
     }
+    contentMeta: {
+      readingTime: (variables: { minutes: number }) => string
+    }
   }
   pages: {
     rss: {
@@ -64,6 +67,7 @@ export interface Translation {
     error: {
       title: string
       notFound: string
+      home: string
     }
     folderContent: {
       folder: string

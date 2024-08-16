@@ -53,6 +53,9 @@ export default {
     tableOfContents: {
       title: "目次",
     },
+    contentMeta: {
+      readingTime: ({ minutes }) => `${minutes} min read`,
+    },
   },
   pages: {
     rss: {
@@ -62,6 +65,7 @@ export default {
     error: {
       title: "Not Found",
       notFound: "ページが存在しないか、非公開設定になっています。",
+      home: "ホームページに戻る",
     },
     folderContent: {
       folder: "フォルダ",

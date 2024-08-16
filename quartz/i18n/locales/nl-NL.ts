@@ -53,6 +53,10 @@ export default {
     tableOfContents: {
       title: "Inhoudsopgave",
     },
+    contentMeta: {
+      readingTime: ({ minutes }) =>
+        minutes === 1 ? "1 minuut leestijd" : `${minutes} minuten leestijd`,
+    },
   },
   pages: {
     rss: {
@@ -62,11 +66,12 @@ export default {
     error: {
       title: "Niet gevonden",
       notFound: "Deze pagina is niet zichtbaar of bestaat niet.",
+      home: "Keer terug naar de start pagina",
     },
     folderContent: {
       folder: "Map",
       itemsUnderFolder: ({ count }) =>
-        count === 1 ? "1 item in deze map" : `${count} items in deze map.`,
+        count === 1 ? "1 item in deze map." : `${count} items in deze map.`,
     },
     tagContent: {
       tag: "Label",

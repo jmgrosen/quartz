@@ -53,6 +53,14 @@ export default {
     tableOfContents: {
       title: "فهرس المحتويات",
     },
+    contentMeta: {
+      readingTime: ({ minutes }) =>
+        minutes == 1
+          ? `دقيقة أو أقل للقراءة`
+          : minutes == 2
+            ? `دقيقتان للقراءة`
+            : `${minutes} دقائق للقراءة`,
+    },
   },
   pages: {
     rss: {
@@ -62,6 +70,7 @@ export default {
     error: {
       title: "غير موجود",
       notFound: "إما أن هذه الصفحة خاصة أو غير موجودة.",
+      home: "العوده للصفحة الرئيسية",
     },
     folderContent: {
       folder: "مجلد",
