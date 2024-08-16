@@ -6,20 +6,33 @@ import { pageResources, renderPage } from "../../components/renderPage"
 import { FullPageLayout } from "../../cfg"
 import { FilePath, joinSegments, pathToRoot } from "../../util/path"
 import { defaultContentPageLayout, sharedPageComponents } from "../../../quartz.layout"
+import { QuartzPluginData } from "../vfile"
 import { Content } from "../../components"
 import chalk from "chalk"
 import { write } from "./helpers"
 import DepGraph from "../../depgraph"
 
-export const ContentPage: QuartzEmitterPlugin<Partial<FullPageLayout>> = (userOpts) => {
-  const opts: FullPageLayout = {
+interface ContentPageOptions {
+  layout: Partial<FullPageLayout>
+  filter: (f: QuartzPluginData) => boolean
+}
+
+const defaultOptions: ContentPageOptions = {
+  layout: {},
+  filter: () => true,
+}
+
+export const ContentPage: QuartzEmitterPlugin<Partial<ContentPageOptions>> = (userOpts) => {
+  const options: ContentPageOptions = { ...defaultOptions, ...userOpts };
+
+  const layout: FullPageLayout = {
     ...sharedPageComponents,
     ...defaultContentPageLayout,
     pageBody: Content(),
-    ...userOpts,
+    ...options.layout,
   }
 
-  const { head: Head, header, beforeBody, pageBody, left, right, footer: Footer } = opts
+  const { head: Head, header, beforeBody, pageBody, left, right, footer: Footer } = layout
   const Header = HeaderConstructor()
   const Body = BodyConstructor()
 
@@ -51,6 +64,10 @@ export const ContentPage: QuartzEmitterPlugin<Partial<FullPageLayout>> = (userOp
         if (slug === "index") {
           containsIndex = true
         }
+	// do the index check first in case something else handles the index page
+	if (!options.filter(file.data)) {
+	  continue;
+	}
 
         const externalResources = pageResources(pathToRoot(slug), resources)
         const componentData: QuartzComponentProps = {
@@ -62,7 +79,7 @@ export const ContentPage: QuartzEmitterPlugin<Partial<FullPageLayout>> = (userOp
           allFiles,
         }
 
-        const content = renderPage(cfg, slug, componentData, opts, externalResources)
+        const content = renderPage(cfg, slug, componentData, layout, externalResources)
         const fp = await write({
           ctx,
           content,

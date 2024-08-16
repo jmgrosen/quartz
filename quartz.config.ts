@@ -1,17 +1,33 @@
-import { QuartzConfig } from "./quartz/cfg"
+import { QuartzConfig, PageLayout } from "./quartz/cfg"
 import * as Plugin from "./quartz/plugins"
+import * as Component from "./quartz/components"
+
+const indexPageLayout: PageLayout = {
+  beforeBody: [
+    Component.MobileOnly(Component.Explorer({ title: null })),
+    Component.Breadcrumbs(),
+  ],
+  left: [
+    Component.PageTitle(),
+    // Component.MobileOnly(Component.Spacer()),
+    // Component.Search(),
+    // Component.Darkmode(),
+    Component.DesktopOnly(Component.Explorer({ title: null })),
+  ],
+  right: [
+    Component.RecentNotes({ title: "recent posts", filter: (d) => d.slug.startsWith("posts/") }),
+  ],
+}
 
 const config: QuartzConfig = {
   configuration: {
-    pageTitle: "🪴 Quartz 4.0",
-    enableSPA: true,
+    pageTitle: "it's jessie",
+    enableSPA: false,
     enablePopovers: true,
-    analytics: {
-      provider: "plausible",
-    },
+    analytics: null,
     locale: "en-US",
-    baseUrl: "quartz.jzhao.xyz",
-    ignorePatterns: ["private", "templates", ".obsidian"],
+    baseUrl: "jessie.grosen.systems",
+    ignorePatterns: ["!(public-media)**/!(*.md)", "!(*.md)", "templates", ".obsidian"],
     defaultDateType: "created",
     theme: {
       cdnCaching: true,
@@ -60,16 +76,19 @@ const config: QuartzConfig = {
       Plugin.CrawlLinks({ markdownLinkResolution: "shortest" }),
       Plugin.Description(),
     ],
-    filters: [Plugin.RemoveDrafts()],
+    filters: [Plugin.ExplicitPublish()],
     emitters: [
       Plugin.AliasRedirects(),
       Plugin.ComponentResources({ fontOrigin: "googleFonts" }),
-      Plugin.ContentPage(),
+      Plugin.ContentPage({ filter: d => d.slug !== 'index' }),
+      Plugin.ContentPage({ filter: d => d.slug === 'index', layout: indexPageLayout }),
       Plugin.FolderPage(),
       Plugin.TagPage(),
       Plugin.ContentIndex({
         enableSiteMap: true,
         enableRSS: true,
+        rssFullHtml: true,
+        rssFilter: (slug, _) => slug.startsWith("posts/"),
       }),
       Plugin.Assets(),
       Plugin.Static(),
